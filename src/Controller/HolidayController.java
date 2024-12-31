@@ -2,12 +2,18 @@ package Controller;
 
 import java.time.LocalDate;
 import java.util.List;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import Model.HolidayModel;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import Model.*;
 import Model.TypeConge;
 import VIEW.UserInterface;
+import DAO.*;
+
+import java.io.IOException;
 
 public class HolidayController {
     private UserInterface view;
@@ -29,6 +35,21 @@ public class HolidayController {
             }
         });
         this.view.getRefresh().addActionListener(e -> refreshEmployeeIds());
+
+        // Ajout des actions d'importation et d'exportation
+        this.view.getImportButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                handleImport();
+            }
+        });
+
+        this.view.getExportButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                handleExport();
+            }
+        });
 
         refreshDisplay();
     }
@@ -144,4 +165,34 @@ public class HolidayController {
             view.getIdComboBox().addItem("Employee " + id);
         }
     }
+
+    private void handleImport() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new FileNameExtensionFilter("CSV Files", "csv"));
+
+        if (fileChooser.showOpenDialog(view) == JFileChooser.APPROVE_OPTION) {
+            String filePath = fileChooser.getSelectedFile().getAbsolutePath();
+            model.importData(filePath);
+            JOptionPane.showMessageDialog(null, "Data import successful!", "Confirmation", JOptionPane.INFORMATION_MESSAGE);
+            refreshDisplay();
+        }
+    }
+
+    private void handleExport() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new FileNameExtensionFilter("CSV Files", "csv"));
+try{
+        if (fileChooser.showSaveDialog(view) == JFileChooser.APPROVE_OPTION) {
+            String filePath = fileChooser.getSelectedFile().getAbsolutePath();
+            if (!filePath.endsWith(".csv")) {
+                filePath += ".csv";
+            }
+            List<Holiday> holiday = new HolidayDAOimplement().getAllElements();
+            model.exportData(filePath,holiday);
+            JOptionPane.showMessageDialog(null, "Data export successful!", "Confirmation", JOptionPane.INFORMATION_MESSAGE);
+        }
+    } catch (IOException e) {
+    e.getMessage();
+}
+}
 }

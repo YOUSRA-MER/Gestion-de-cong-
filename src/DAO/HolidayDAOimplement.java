@@ -1,5 +1,6 @@
 package DAO;
 
+import java.io.*;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -8,7 +9,8 @@ import java.util.List;
 import Model.Holiday;
 import Model.TypeConge;
 
-public class HolidayDAOimplement implements GenericDAOI<Holiday> {
+public class HolidayDAOimplement implements GenericDAOI<Holiday>, DataImportExport<Holiday> {
+
     @Override
     public void addElement(Holiday holiday) {
         String sql = "INSERT INTO holidays (idEmployee, startDate, endDate, holidayType) VALUES (?, ?, ?, ?)";
@@ -90,5 +92,49 @@ public class HolidayDAOimplement implements GenericDAOI<Holiday> {
             System.out.println(e.getMessage());
         }
         return null;
+    }
+
+    @Override
+    public void importData(String filePath) {
+        String sql = "INSERT INTO holidays (idEmployee, startDate, endDate, holidayType) VALUES (?, ?, ?, ?)";
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath));
+             PreparedStatement stm = Connect.getConnection().prepareStatement(sql)) {
+
+            String line;
+            reader.readLine(); // Skip header
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data.length == 4) {
+                    stm.setInt(1, Integer.parseInt(data[0].trim()));
+                    stm.setDate(2, Date.valueOf(data[1].trim()));
+                    stm.setDate(3, Date.valueOf(data[2].trim()));
+                    stm.setString(4, data[3].trim());
+                    stm.executeUpdate();
+                }
+            }
+            System.out.println("Holidays imported successfully!");
+
+        } catch (SQLException | IOException e) {
+            System.err.println("Error importing data: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void exportData(String fileName, List<Holiday> data) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+            writer.write("idEmployee,startDate,endDate,holidayType");
+            writer.newLine();
+            for (Holiday holiday : data) {
+                String line = String.format("%d,%s,%s,%s",
+                        holiday.getIdEmployee(),
+                        holiday.getStartDate(),
+                        holiday.getEndDate(),
+                        holiday.getConge().name()
+                );
+                writer.write(line);
+                writer.newLine();
+            }
+        }
+        System.out.println("Holidays exported successfully!");
     }
 }

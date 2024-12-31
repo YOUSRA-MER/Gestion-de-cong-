@@ -1,7 +1,9 @@
 package Model;
+import java.io.IOException;
 
 import DAO.EmployeeDAOimplement;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +29,7 @@ public class EmployeeModel {
 
         Employees emp = new Employees(0, nom, prenom, email, telephone, salaire, role, poste);
         dao.addElement(emp);
-        return "";
+        return "Employee added successfully!";
     }
 
     public String modifyEmployee(int id, String nom, String prenom, String email, String telephone, double salaire, Role role, Poste poste) {
@@ -45,7 +47,7 @@ public class EmployeeModel {
 
         Employees emp = new Employees(id, nom, prenom, email, telephone, salaire, role, poste);
         dao.updateElement(emp);
-        return "";
+        return "Employee modified successfully!";
     }
 
     public boolean deleteEmployee(int id) {
@@ -70,5 +72,38 @@ public class EmployeeModel {
             data.add(row);
         }
         return data;
+    }
+
+    private boolean checkFileExists(File file) {
+        if (!file.exists()) {
+            throw new IllegalArgumentException("The file does not exist: " + file.getPath());
+        }
+        return true;
+    }
+
+    private boolean checkIsFile(File file) {
+        if (!file.isFile()) {
+            throw new IllegalArgumentException("The specified path is not a file: " + file.getPath());
+        }
+        return true;
+    }
+
+    private boolean checkIsReadable(File file) {
+        if (!file.canRead()) {
+            throw new IllegalArgumentException("The specified file is not readable: " + file.getPath());
+        }
+        return true;
+    }
+    public void importData(String FileName) {
+        File file = new File(FileName);
+        checkFileExists(file);
+        checkIsFile(file);
+        checkIsReadable(file);
+        dao.importData(FileName);
+    }
+
+    public void exportData(String FileName , List<Employees> data) throws IOException {
+        File file = new File(FileName);
+        dao.exportData(FileName, data);
     }
 }

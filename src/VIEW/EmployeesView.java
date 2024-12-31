@@ -15,6 +15,7 @@ public class EmployeesView extends JPanel {
     private DefaultTableModel model;
     private JScrollPane scrollPane;
     private JButton addButton, updateButton, deleteButton, displayButton;
+    private JButton importButton, exportButton; // Nouveaux boutons
 
     public EmployeesView() {
         initializeComponents();
@@ -47,6 +48,9 @@ public class EmployeesView extends JPanel {
         updateButton = UIUtils.createButton("UPDATE");
         deleteButton = UIUtils.createButton("REMOVE");
         displayButton = UIUtils.createButton("DISPLAY");
+
+        importButton = UIUtils.createButton("IMPORT");
+        exportButton = UIUtils.createButton("EXPORT");
     }
 
     private void assembleComponents() {
@@ -69,6 +73,8 @@ public class EmployeesView extends JPanel {
         buttonPanel.add(updateButton);
         buttonPanel.add(deleteButton);
         buttonPanel.add(displayButton);
+        buttonPanel.add(importButton);
+        buttonPanel.add(exportButton);
 
         this.add(formPanel, BorderLayout.NORTH);
         this.add(scrollPane, BorderLayout.CENTER);
@@ -88,4 +94,6 @@ public class EmployeesView extends JPanel {
     public JButton getUpdateButton() { return updateButton; }
     public JButton getDeleteButton() { return deleteButton; }
     public JButton getDisplayButton() { return displayButton; }
+    public JButton getImportButton() { return importButton; }
+    public JButton getExportButton() { return exportButton; }
 }

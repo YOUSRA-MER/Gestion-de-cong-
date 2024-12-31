@@ -5,14 +5,12 @@ import javax.swing.table.DefaultTableModel;
 import Model.*; // Ensure this package contains the required classes/enums
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 public class UserInterface extends JFrame {
     private JTextField startDateField, endDateField;
     private JComboBox<String> idComboBox;
     private JComboBox<TypeConge> congeField;
-    private JButton add, delete, update, refresh;
+    private JButton add, delete, update, refresh, importButton, exportButton;
     private DefaultTableModel tableModel;
     private JTable table;
     private JTabbedPane switchPanels;
@@ -29,6 +27,7 @@ public class UserInterface extends JFrame {
         subPanelButtons = UIUtils.createPanel(new FlowLayout(), 0);
         subPanelInput = UIUtils.createPanel(new GridLayout(4, 2, 10, 10), 10);
 
+        // Inputs
         subPanelInput.add(UIUtils.createLabel("ID Employee:"));
         idComboBox = new JComboBox<>();
         subPanelInput.add(idComboBox);
@@ -50,12 +49,17 @@ public class UserInterface extends JFrame {
         delete = UIUtils.createButton("DELETE");
         update = UIUtils.createButton("UPDATE");
         refresh = UIUtils.createButton("REFRESH");
+        importButton = UIUtils.createButton("IMPORT");
+        exportButton = UIUtils.createButton("EXPORT");
 
         subPanelButtons.add(add);
         subPanelButtons.add(delete);
         subPanelButtons.add(update);
         subPanelButtons.add(refresh);
+        subPanelButtons.add(importButton);
+        subPanelButtons.add(exportButton);
 
+        // Table
         String[] columns = {"Id", "Employee", "Start Date", "End Date", "Type of Holiday"};
         tableModel = new DefaultTableModel(columns, 0);
         table = new JTable(tableModel);
@@ -64,7 +68,8 @@ public class UserInterface extends JFrame {
         mainPanel.add(new JScrollPane(table), BorderLayout.CENTER);
         mainPanel.add(subPanelButtons, BorderLayout.SOUTH);
 
-        employeePanel = new EmployeesView(); // Ensure EmployeesView exists
+        // Tabbed Panel
+        employeePanel = new EmployeesView();
         switchPanels = new JTabbedPane();
         switchPanels.add("Employees", employeePanel);
         switchPanels.add("Holidays", mainPanel);
@@ -123,5 +128,13 @@ public class UserInterface extends JFrame {
 
     public JPanel getHolidayPanel() {
         return mainPanel;
+    }
+
+    public JButton getImportButton() {
+        return importButton;
+    }
+
+    public JButton getExportButton() {
+        return exportButton;
     }
 }

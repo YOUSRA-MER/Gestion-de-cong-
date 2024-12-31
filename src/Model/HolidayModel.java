@@ -1,5 +1,7 @@
 package Model;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -18,7 +20,6 @@ public class HolidayModel {
     }
 
     public boolean demandHoliday(int idEmployee, LocalDate startDate, LocalDate endDate, TypeConge conge) {
-        // Vérification de la date (pas dans le passé)
         if (startDate.isBefore(LocalDate.now())) {
             throw new IllegalArgumentException("La date de début ne peut pas être dans le passé.");
         }
@@ -39,7 +40,6 @@ public class HolidayModel {
     }
 
     public boolean updateHoliday(int id, int idEmployee, LocalDate startDate, LocalDate endDate, TypeConge conge) {
-        // Vérification de la date (pas dans le passé)
         if (startDate.isBefore(LocalDate.now())) {
             throw new IllegalArgumentException("La date de début ne peut pas être dans le passé.");
         }
@@ -100,5 +100,39 @@ public class HolidayModel {
             ids.add(String.valueOf(element.getId()));
         }
         return ids;
+    }
+
+    private boolean checkFileExists(File file) {
+        if (!file.exists()) {
+            throw new IllegalArgumentException("Le fichier n'existe pas : " + file.getPath());
+        }
+        return true;
+    }
+
+    private boolean checkIsFile(File file) {
+        if (!file.isFile()) {
+            throw new IllegalArgumentException("Le chemin spécifié n'est pas un fichier : " + file.getPath());
+        }
+        return true;
+    }
+
+    private boolean checkIsReadable(File file) {
+        if (!file.canRead()) {
+            throw new IllegalArgumentException("Le fichier spécifié n'est pas lisible : " + file.getPath());
+        }
+        return true;
+    }
+
+    public void importData(String fileName) {
+        File file = new File(fileName);
+        checkFileExists(file);
+        checkIsFile(file);
+        checkIsReadable(file);
+        daoMain.importData(fileName);
+    }
+
+    public void exportData(String fileName, List<Holiday> data) throws IOException {
+        File file = new File(fileName);
+        daoMain.exportData(fileName, data);
     }
 }

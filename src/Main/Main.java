@@ -19,9 +19,5 @@ public class Main {
         UserDAOimplement daoUser = new UserDAOimplement();
         UserModel modelUSer = new UserModel(daoUser);
         UserLoginController controllerUser = new UserLoginController(viewUser,modelUSer,view);
-
-
-
     }
-
 }
